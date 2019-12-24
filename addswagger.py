@@ -2,47 +2,316 @@ import os
 import sys
 from typing import List
 
+from javalang.tree import MethodDeclaration
+
 cwd = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(1, os.path.join(cwd, '..', 'perfec2'))
 
 import perfec2
 
-repos_root = '/Users/sroman/repos/'
-repos = [
-    # 'aa-cfr-api',
-    # 'aa-com-api',
-    # 'aa-con-api',
-    # 'aa-iss-api',
-    # 'aa-per-api',
-    # 'aa-prl-api',
-    # 'address-api',
-    # 'ams-search-api',
-    # 'apppolicy-api',
-    # 'contact-api',
-    # 'identifier-api',
-    # 'issue-api',
-    # 'organization-api',
-    # 'organizationgroup-api',
-    # 'person-api',
-    # 'role-api',
-    # 'tag-api'
-    # 'issuesby100m-api',
-    # 'issuesby5m-api',
-    # 'authorization-api',
-    # 'authentication-api'
-]
+repos_root = '/Users/sroman/repos'
+repos = {
+    'address-api': "A REST API for operations on Addresses, Address Types and their relationships in AMS. Addresses are used to\n"
+                    " geographically locate a Person or Organization or for operations on identification purposes. Each Address has a mandatory Address Type.",
+    # 'ams-search-api': "A REST API for operations on searching AMS entities by specifying one or more attribute values; e.g.: "
+                    # "\"all Persons with last name like 'Johns%'\" or \"all franchises with manufacturer 'Ford'\"\n"
+    # 'apppolicy-api': "A REST API for operations on Application Policies and their relationships in AMS. An AppPolicy grants a user access to\n"
+                        # " an online marketplace (such as m.com, OVE, or Simulcast) on behalf of an Organization (dealership). Can also represent\n
+                        # "other application-level AMS permissions"
+    # 'contact-api': "A REST API for operations on Contacts, Contact Types and their relationships in AMS. Contacts are lines of communication\n"
+                    # " to Organizations and Persons such as telephone numbers, email addresses, etc. Each Contact has a mandatory Contact Type. \n"
+    # 'identifier-api': "A REST API for operations on Identifiers, Identifier Types and their relationships in AMS. Identifiers are used\n"
+                        # " in conjunction with an Identifier Type to uniquely identify an Organization or Person. An entity may have many Identifiers \n"
+                        # "but never of the same Identifier Type. Pairs of Identifier/IdentifierType are always unique."
+    # 'issue-api': "A REST API for operations on Issues and their relationships in AMS. Issues track actions required of an Organization or Person \n"
+                    # "such as the submission of legal or identification documents or any condition preventing a person from buying or selling at \n"
+    #                   "auction or online."
+    # 'organization-api': "A REST API for operations on Organizations and their relationships in AMS. Organizations (dealerships), may be \n"
+                        # "related to Organization Groups, Issues, Contacts and can grant Roles to Persons.",
+    # 'organizationgroup-api': "A REST API for operations on OrganizationGroups and their relationships in AMS. Organization Groups (franchise groups)\n"
+                                # "may be related to Persons, Organizations, and Application Policies. A relationship between an Organization Group\n"
+    #                             "and Organization (OrganizationGroupMember) may have its own attributes.",
+    # 'person-api': "A REST API for operations on Persons and their relationships in AMS. Persons may be related \n"
+    #               "to Identifiers, Contacts, Issues, Addresses, and can have Roles assigned to them by Organizations.",
+    # 'role-api': "A REST API for operations on Roles and their relationships in AMS. Roles grant permissions to Persons on behalf"
+    #                 " of Organizations.",
+    # 'tag-api': "A REST API for operations on Tags and their relationships in AMS. Tags may be related \n"
+                   # "to Organizations to help establish hierarchies or add other metadata.",
+    # 'authorization-api': "An API for verifying authorization with AMS.",
+    # 'authentication-api': "An API for authenticating with AMS."
+}
 
 
-def refactor_controller(lines: List[str]):
-    pass
+def props_for_method(m: MethodDeclaration) -> dict:
+    if perfec2.util.is_getbyuid_web_endpoint(m):
+        print(f'{m.name} is_getbyuid_web_endpoint')
+        return {
+            'nickname': '"Retrieve xxx"',
+            'value': '"Retrieve an existing xxx"',
+            'consumes': '"application/json"',
+            'notes': '"Retrieves an existing xxx by its uid. "',
+            'response': 'Object.class',
+            'code': 200
+        }
+    elif perfec2.util.is_deletebyuid_web_endpoint(m):
+        print(f'{m.name} is_deletebyuid_web_endpoint')
+        return {
+            'nickname': '"Delete xxx"',
+            'value': '"Delete an existing xxx"',
+            'consumes': '"application/json"',
+            'notes': '"Deletes an existing xxx by its uid. "',
+            'response': 'Void.class',
+            'code': 204
+        }
+    elif perfec2.util.is_updatebyuid_web_endpoint(m):
+        print(f'{m.name} is_updatebyuid_web_endpoint')
+        return {
+            'nickname': '"Update xxx"',
+            'value': '"Update an existing xxx"',
+            'consumes': '"application/json"',
+            'notes': '"Updates an existing xxx by its uid with the supplied properties. Unknown properties are ignored."',
+            'response': 'Object.class',
+            'code': 200
+        }
+    elif perfec2.util.is_create_web_endpoint(m):
+        print(f'{m.name} is_create_web_endpoint')
+        return {
+            'nickname': '"Create xxx"',
+            'value': '"Create a new xxx entity"',
+            'consumes': '"application/json"',
+            'notes': '"Creates a new xxx with the supplied properties. Unknown properties are ignored. "',
+            'response': 'Object.class',
+            'code': 201
+        }
+    elif perfec2.util.is_associate_web_endpoint(m):
+        print(f'{m.name} is_associate_web_endpoint')
+        return {
+            'nickname': '"Associate xxx and yyy"',
+            'value': '"Associate existing xxx and yyy"',
+            'consumes': '"application/json"',
+            'notes': '"Creates a relationship between existing xxx and yyy. "',
+            'response': 'Object.class',
+            'code': 200
+        }
+    elif perfec2.util.is_disassociate_web_endpoint(m):
+        print(f'{m.name} is_disassociate_web_endpoint')
+        return {
+            'nickname': '"Associate xxx and yyy"',
+            'value': '"Associate existing xxx and yyy"',
+            'consumes': '"application/json"',
+            'notes': '"Creates a relationship between existing xxx and yyy. "',
+            'response': 'Void.class',
+            'code': 204
+        }
+    elif perfec2.util.is_create_and_associate_web_endpoint(m):
+        print(f'{m.name} is_create_and_associate_web_endpoint')
+        return {
+            'nickname': '"Create xxx and associate yyy"',
+            'value': '"Create xxx and associate with an existing yyy"',
+            'consumes': '"application/json"',
+            'notes': '"Creates a new xxx and associates it with an existing yyy. "',
+            'response': 'Object.class',
+            'code': 201
+        }
+    elif perfec2.util.is_get_associations_web_endpoint(m):
+        print(f'{m.name} is_get_associations_web_endpoint')
+        return {
+            'nickname': '"Retrieve xxx associated yyy"',
+            'value': '"Retrieve existing yyys associated with xxx"',
+            'consumes': '"application/json"',
+            'notes': '"Retrieves existing yyyx associate with existing xxx. "',
+            'response': 'Object.class',
+            'code': 200
+        }
+    elif perfec2.util.is_get_type_by_key_web_endpoint(m):
+        print(f'{m.name} is_get_type_by_key_web_endpoint')
+        return {
+            'nickname': '"Retrieve xxx Type by key"',
+            'value': '"Retrieve existing xxx Type by key"',
+            'consumes': '"application/json"',
+            'notes': '"Retrieves existing xxx Type with a given key. "',
+            'response': 'Object.class',
+            'code': 200
+        }
+    elif perfec2.util.is_delete_type_by_key_web_endpoint(m):
+        print(f'{m.name} is_delete_type_by_key_web_endpoint')
+        return {
+            'nickname': '"Delete xxx Type by key"',
+            'value': '"Delete existing xxx Type by key"',
+            'consumes': '"application/json"',
+            'notes': '"Deletes existing xxx Type with a given key. "',
+            'response': 'Object.class',
+            'code': 204
+        }
+    elif perfec2.util.is_update_type_by_key_web_endpoint(m):
+        print(f'{m.name} is_update_type_by_key_web_endpoint')
+        return {
+            'nickname': '"Update xxx Type by key"',
+            'value': '"Update existing xxx Type by key"',
+            'consumes': '"application/json"',
+            'notes': '"Updates existing xxx Type with a given key. "',
+            'response': 'Object.class',
+            'code': 200
+        }
+    elif perfec2.util.is_create_type_by_key_web_endpoint(m):
+        print(f'{m.name} is_create_type_by_key_web_endpoint')
+        return {
+            'nickname': '"Create new xxx Type by key"',
+            'value': '"Create a new xxx Type by key"',
+            'consumes': '"application/json"',
+            'notes': '"Creates a new xxx Type with a given key. "',
+            'response': 'Object.class',
+            'code': 201
+        }
+    elif perfec2.util.is_associate_type_with_entity_web_endpoint(m):
+        print(f'{m.name} is_associate_type_with_entity_web_endpoint')
+        return {
+            'nickname': '"Associate xxx Type with xxx"',
+            'value': '"Associate an existing xxx Type with an existing xxx"',
+            'consumes': '"application/json"',
+            'notes': '"Associates an existing xxx Type with an existing xxx."',
+            'response': 'Object.class',
+            'code': 200
+        }
+    elif perfec2.util.is_disassociate_type_with_entity_web_endpoint(m):
+        print(f'{m.name} is_disassociate_type_with_entity_web_endpoint')
+        return {
+            'nickname': '"Disassociate xxx Type from xxx"',
+            'value': '"Disassociate an existing xxx Type from an existing xxx"',
+            'consumes': '"application/json"',
+            'notes': '"Disassociates an existing xxx Type from an existing xxx."',
+            'response': 'Object.class',
+            'code': 204
+        }
+    elif perfec2.util.is_get_type_associations_web_endpoint(m):
+        print(f'{m.name} is_get_type_associations_web_endpoint')
+        return {
+            'nickname': '"Retrieve xxx by xxx Type key"',
+            'value': '"Retrieve existing xxxs of given xxx Type by key"',
+            'consumes': '"application/json"',
+            'notes': '"Retrieves all xxx associated with existing xxx Type by key. "',
+            'response': 'Object.class',
+            'code': 200
+        }
+    else:
+        print(f'{m.name} is unknown <<<========================')
+        return {
+            'nickname': '""',
+            'value': '""',
+            'consumes': '"application/json"',
+            'notes': '""',
+            'response': 'Object.class',
+            'code': 999
+        }
+
+
+# fixme some methods are using @PutMapping or @GetMapping instead of @RequestMapping
+def refactor_controller(lines: List[str]) -> List[str]:
+    """
+    within this method we have access to the lines of the file being processed
+    and the compilation unit itself
+    :param lines:   provided by perfec2.process_file()
+    :return:
+    """
+    clazz = perfec2.this_clazz()
+    print(f'annotating {clazz.name}')
+
+    for m in perfec2.methods_with_anno(clazz, 'RequestMapping'):
+        props = props_for_method(m)
+        perfec2.add_method_annotation_with_props(m, props, 'ApiOperation', lines)
+    perfec2.add_import('io.swagger.annotations.ApiOperation', lines)
+    return lines
+
+
+def refactor_pom(xml_path: str, repo: str):
+    new_plugins_lines = [
+        '<plugin>\n',
+        '    <groupId>io.swagger.codegen.v3</groupId>\n',
+        '    <artifactId>swagger-codegen-maven-plugin</artifactId>\n',
+        '    <version>3.0.14</version>\n',
+        '    <executions>\n',
+        '        <execution>\n',
+        '            <phase>process-classes</phase>\n',
+        '            <goals>\n',
+        '                <goal>generate</goal>\n',
+        '            </goals>\n',
+        '            <configuration>\n',
+        '                <inputSpec>${apidocs.directory}/swagger.json</inputSpec>\n',
+        '                <language>html</language>\n',
+        '                <output>${apidocs.directory}</output>\n',
+        '            </configuration>\n',
+        '        </execution>\n',
+        '    </executions>\n',
+        '</plugin>\n',
+        '<plugin>\n',
+        '    <groupId>com.github.kongchen</groupId>\n',
+        '    <artifactId>swagger-maven-plugin</artifactId>\n',
+        '    <version>${swagger-maven-plugin-version}</version>\n',
+        '    <configuration>\n',
+        '        <apiSources>\n',
+        '            <apiSource>\n',
+        '                <springmvc>true</springmvc>\n',
+        '                <locations>com.coxautoinc.acctmgmt</locations>\n',
+        '                <info>\n',
+        '                    <title>${name}</title>\n',
+        '                    <version>{build.version}</version>\n',
+        '                    <description>\n',
+        '                        {}\n'.format(repos[repo]),
+        '                    </description>\n',
+        '                    <contact>\n',
+        '                        <email>accmt@coxautoinc.com</email>\n',
+        '                        <name>Cox Auto Account Management Development Team</name>\n',
+        '                        <url>Please contact the product group for Account Management</url>\n',
+        '                    </contact>\n',
+        '                    <license>\n',
+        '                        <url>http://www.coxautoinc.com</url>\n',
+        '                        <name>Cox Automotive, Inc.</name>\n',
+        '                    </license>\n',
+        '                </info>\n',
+        '                <swaggerDirectory>${apidocs.directory}</swaggerDirectory>\n',
+        '            </apiSource>\n',
+        '        </apiSources>\n',
+        '    </configuration>\n',
+        '    <executions>\n',
+        '        <execution>\n',
+        '            <phase>compile</phase>\n',
+        '            <goals>\n',
+        '                <goal>generate</goal>\n',
+        '            </goals>\n',
+        '        </execution>\n',
+        '    </executions>\n',
+        '</plugin>\n']
+    new_properties_lines = [
+        '    <swagger-maven-plugin-version>3.1.7</swagger-maven-plugin-version>\n',
+        '    <swagger.annotations.version>1.5.24</swagger.annotations.version>\n',
+        '    <apidocs.directory>${project.basedir}/src/main/resources/static/${name}</apidocs.directory>\n'
+    ]
+    with open(xml_path, 'r+') as pomfile:
+        lines = pomfile.readlines()
+
+        for i, line in enumerate(lines):
+            if '</properties>' in line:
+                lines = perfec2.util.match_indentation_and_insert(new_properties_lines, i, lines, indent_mod=4)
+                break
+
+        for i, line in enumerate(lines):
+            if '</plugins>' in line:
+                lines = perfec2.util.match_indentation_and_insert(new_plugins_lines, i, lines, indent_mod=4)
+                break
+
+        perfec2.util.write_file(lines, pomfile)
 
 
 def main():
     for repo in repos:
-        for root, dirs, files in os.walk(f'{repos_root}/{repo}/src/'):
+        for root, dirs, files in os.walk(f'{repos_root}/{repo}'):
             for f in files:
-                if f.endswith('.java'):
+                if f.endswith('Controller.java'):
                     perfec2.process_file(os.path.join(root, f), refactor_controller)
+                    pass
+                elif f == 'pom.xml':
+                    refactor_pom(os.path.join(root, f), repo)
+        perfec2.util.mvn_clean_install(f'{repos_root}/{repo}')
 
 
 if __name__ == '__main__':
