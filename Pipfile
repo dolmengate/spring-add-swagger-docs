@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 javalang = "*"
-beautifulsoup4 = "*"
+deprecated = "*"
 
 [requires]
 python_version = "3.7"

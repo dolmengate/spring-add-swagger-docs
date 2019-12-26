@@ -2,7 +2,8 @@ import os
 import sys
 from typing import List
 
-from javalang.tree import MethodDeclaration
+from javalang.tree import MethodDeclaration, ClassDeclaration
+import traceback
 
 cwd = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(1, os.path.join(cwd, '..', 'perfec2'))
@@ -11,8 +12,7 @@ import perfec2
 
 repos_root = '/Users/sroman/repos'
 repos = {
-    'address-api': "A REST API for operations on Addresses, Address Types and their relationships in AMS. Addresses are used to\n"
-                    " geographically locate a Person or Organization or for operations on identification purposes. Each Address has a mandatory Address Type.",
+    # 'address-api': "A REST API for operations on Addresses, Address Types and their relationships in AMS. Addresses are used to geographically locate a Person or Organization or for operations on identification purposes. Each Address has a mandatory Address Type.",
     # 'ams-search-api': "A REST API for operations on searching AMS entities by specifying one or more attribute values; e.g.: "
                     # "\"all Persons with last name like 'Johns%'\" or \"all franchises with manufacturer 'Ford'\"\n"
     # 'apppolicy-api': "A REST API for operations on Application Policies and their relationships in AMS. An AppPolicy grants a user access to\n"
@@ -31,8 +31,8 @@ repos = {
     # 'organizationgroup-api': "A REST API for operations on OrganizationGroups and their relationships in AMS. Organization Groups (franchise groups)\n"
                                 # "may be related to Persons, Organizations, and Application Policies. A relationship between an Organization Group\n"
     #                             "and Organization (OrganizationGroupMember) may have its own attributes.",
-    # 'person-api': "A REST API for operations on Persons and their relationships in AMS. Persons may be related \n"
-    #               "to Identifiers, Contacts, Issues, Addresses, and can have Roles assigned to them by Organizations.",
+    'person-api': "A REST API for operations on Persons and their relationships in AMS. Persons may be related \n"
+                  "to Identifiers, Contacts, Issues, Addresses, and can have Roles assigned to them by Organizations.",
     # 'role-api': "A REST API for operations on Roles and their relationships in AMS. Roles grant permissions to Persons on behalf"
     #                 " of Organizations.",
     # 'tag-api': "A REST API for operations on Tags and their relationships in AMS. Tags may be related \n"
@@ -48,7 +48,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Retrieve xxx"',
             'value': '"Retrieve an existing xxx"',
-            'consumes': '"application/json"',
             'notes': '"Retrieves an existing xxx by its uid. "',
             'response': 'Object.class',
             'code': 200
@@ -58,7 +57,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Delete xxx"',
             'value': '"Delete an existing xxx"',
-            'consumes': '"application/json"',
             'notes': '"Deletes an existing xxx by its uid. "',
             'response': 'Void.class',
             'code': 204
@@ -68,7 +66,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Update xxx"',
             'value': '"Update an existing xxx"',
-            'consumes': '"application/json"',
             'notes': '"Updates an existing xxx by its uid with the supplied properties. Unknown properties are ignored."',
             'response': 'Object.class',
             'code': 200
@@ -78,7 +75,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Create xxx"',
             'value': '"Create a new xxx entity"',
-            'consumes': '"application/json"',
             'notes': '"Creates a new xxx with the supplied properties. Unknown properties are ignored. "',
             'response': 'Object.class',
             'code': 201
@@ -88,7 +84,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Associate xxx and yyy"',
             'value': '"Associate existing xxx and yyy"',
-            'consumes': '"application/json"',
             'notes': '"Creates a relationship between existing xxx and yyy. "',
             'response': 'Object.class',
             'code': 200
@@ -98,7 +93,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Associate xxx and yyy"',
             'value': '"Associate existing xxx and yyy"',
-            'consumes': '"application/json"',
             'notes': '"Creates a relationship between existing xxx and yyy. "',
             'response': 'Void.class',
             'code': 204
@@ -108,7 +102,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Create xxx and associate yyy"',
             'value': '"Create xxx and associate with an existing yyy"',
-            'consumes': '"application/json"',
             'notes': '"Creates a new xxx and associates it with an existing yyy. "',
             'response': 'Object.class',
             'code': 201
@@ -118,7 +111,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Retrieve xxx associated yyy"',
             'value': '"Retrieve existing yyys associated with xxx"',
-            'consumes': '"application/json"',
             'notes': '"Retrieves existing yyyx associate with existing xxx. "',
             'response': 'Object.class',
             'code': 200
@@ -128,7 +120,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Retrieve xxx Type by key"',
             'value': '"Retrieve existing xxx Type by key"',
-            'consumes': '"application/json"',
             'notes': '"Retrieves existing xxx Type with a given key. "',
             'response': 'Object.class',
             'code': 200
@@ -138,7 +129,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Delete xxx Type by key"',
             'value': '"Delete existing xxx Type by key"',
-            'consumes': '"application/json"',
             'notes': '"Deletes existing xxx Type with a given key. "',
             'response': 'Object.class',
             'code': 204
@@ -148,7 +138,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Update xxx Type by key"',
             'value': '"Update existing xxx Type by key"',
-            'consumes': '"application/json"',
             'notes': '"Updates existing xxx Type with a given key. "',
             'response': 'Object.class',
             'code': 200
@@ -158,7 +147,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Create new xxx Type by key"',
             'value': '"Create a new xxx Type by key"',
-            'consumes': '"application/json"',
             'notes': '"Creates a new xxx Type with a given key. "',
             'response': 'Object.class',
             'code': 201
@@ -168,7 +156,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Associate xxx Type with xxx"',
             'value': '"Associate an existing xxx Type with an existing xxx"',
-            'consumes': '"application/json"',
             'notes': '"Associates an existing xxx Type with an existing xxx."',
             'response': 'Object.class',
             'code': 200
@@ -178,7 +165,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Disassociate xxx Type from xxx"',
             'value': '"Disassociate an existing xxx Type from an existing xxx"',
-            'consumes': '"application/json"',
             'notes': '"Disassociates an existing xxx Type from an existing xxx."',
             'response': 'Object.class',
             'code': 204
@@ -188,7 +174,6 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '"Retrieve xxx by xxx Type key"',
             'value': '"Retrieve existing xxxs of given xxx Type by key"',
-            'consumes': '"application/json"',
             'notes': '"Retrieves all xxx associated with existing xxx Type by key. "',
             'response': 'Object.class',
             'code': 200
@@ -198,11 +183,42 @@ def props_for_method(m: MethodDeclaration) -> dict:
         return {
             'nickname': '""',
             'value': '""',
-            'consumes': '"application/json"',
-            'notes': '""',
+                        'notes': '""',
             'response': 'Object.class',
             'code': 999
         }
+
+
+def request_mapping_props(m: MethodDeclaration) -> dict:
+    if perfec2.util.method_has_annotation(m, 'PostMapping'):
+        post_mapping = perfec2.util.get_method_annotation(m, 'PostMapping')
+        path = perfec2.util.get_annotation_property(post_mapping)
+        return {'value': path, 'method': 'RequestMethod.POST'}
+
+    if perfec2.util.method_has_annotation(m, 'GetMapping'):
+        post_mapping = perfec2.util.get_method_annotation(m, 'GetMapping')
+        path = perfec2.util.get_annotation_property(post_mapping)
+        return {'value': path, 'method': 'RequestMethod.GET'}
+
+    if perfec2.util.method_has_annotation(m, 'PutMapping'):
+        post_mapping = perfec2.util.get_method_annotation(m, 'PutMapping')
+        path = perfec2.util.get_annotation_property(post_mapping)
+        return {'value': path, 'method': 'RequestMethod.PUT'}
+
+
+def use_RequestMapping_only(lines: [str]) -> [str]:
+    perfec2.replace_annotation_on_members(perfec2.this_clazz(), 'methods', lines,
+                                          'PostMapping', 'RequestMapping', request_mapping_props, oneline=True)
+
+def use_RestController_only(lines: [str]) -> [str]:
+    if perfec2.get_class_annotation(perfec2.this_clazz(), 'Controller'):
+        perfec2.remove_node_annotation(perfec2.this_clazz(), 'Controller', lines)
+        perfec2.add_node_annotation(perfec2.this_clazz(), 'RestController', lines)
+
+
+def add_link_to_readme():
+    # todo
+    pass
 
 
 # fixme some methods are using @PutMapping or @GetMapping instead of @RequestMapping
@@ -215,12 +231,33 @@ def refactor_controller(lines: List[str]) -> List[str]:
     """
     clazz = perfec2.this_clazz()
     print(f'annotating {clazz.name}')
+    use_RestController_only(lines)
+    use_RequestMapping_only(lines)
+    do_swagger_annotations(lines)
+    class_RequestMapping_produces_consumes(lines)
 
-    for m in perfec2.methods_with_anno(clazz, 'RequestMapping'):
-        props = props_for_method(m)
-        perfec2.add_method_annotation_with_props(m, props, 'ApiOperation', lines)
-    perfec2.add_import('io.swagger.annotations.ApiOperation', lines)
     return lines
+
+
+def do_swagger_annotations(lines):
+    perfec2.annotate_methods_having_annotation(perfec2.this_clazz(), lines, 'RequestMapping', 'ApiOperation', props_for_method)
+    perfec2.add_import('io.swagger.annotations.ApiOperation', lines)
+
+
+def class_RequestMapping_produces_consumes(lines):
+    # fix class-level annotation
+    try:
+        req_mapping_anno = perfec2.get_class_annotation(perfec2.this_clazz(), 'RequestMapping')
+        path = perfec2.util.get_annotation_property(req_mapping_anno)
+        new_anno_props = {
+            'value': path,
+            'produces': '"application/json"',
+            'consumes': '"application/json"',
+        }
+        perfec2.remove_node_annotation(perfec2.this_clazz(), 'RequestMapping', lines)
+        perfec2.add_node_annotation(perfec2.this_clazz(), 'RequestMapping', lines, anno_props=new_anno_props, oneline=True)
+    except Exception as e:
+        print(traceback.format_exc())
 
 
 def refactor_pom(xml_path: str, repo: str):
@@ -254,7 +291,7 @@ def refactor_pom(xml_path: str, repo: str):
         '                <locations>com.coxautoinc.acctmgmt</locations>\n',
         '                <info>\n',
         '                    <title>${name}</title>\n',
-        '                    <version>{build.version}</version>\n',
+        '                    <version>${build.version}</version>\n',
         '                    <description>\n',
         '                        {}\n'.format(repos[repo]),
         '                    </description>\n',
@@ -282,9 +319,9 @@ def refactor_pom(xml_path: str, repo: str):
         '    </executions>\n',
         '</plugin>\n']
     new_properties_lines = [
-        '    <swagger-maven-plugin-version>3.1.7</swagger-maven-plugin-version>\n',
-        '    <swagger.annotations.version>1.5.24</swagger.annotations.version>\n',
-        '    <apidocs.directory>${project.basedir}/src/main/resources/static/${name}</apidocs.directory>\n'
+        '<swagger-maven-plugin-version>3.1.7</swagger-maven-plugin-version>\n',
+        '<swagger.annotations.version>1.5.24</swagger.annotations.version>\n',
+        '<apidocs.directory>${project.basedir}/src/main/resources/static/${name}</apidocs.directory>\n'
     ]
     with open(xml_path, 'r+') as pomfile:
         lines = pomfile.readlines()
@@ -304,14 +341,15 @@ def refactor_pom(xml_path: str, repo: str):
 
 def main():
     for repo in repos:
-        for root, dirs, files in os.walk(f'{repos_root}/{repo}'):
+        full_dir = f'{repos_root}/{repo}'
+        for root, dirs, files in os.walk(full_dir):
             for f in files:
                 if f.endswith('Controller.java'):
                     perfec2.process_file(os.path.join(root, f), refactor_controller)
-                    pass
                 elif f == 'pom.xml':
                     refactor_pom(os.path.join(root, f), repo)
-        perfec2.util.mvn_clean_install(f'{repos_root}/{repo}')
+        # perfec2.util.mvn_clean_install(full_dir)
+        # add_link_to_readme(full_dir)
 
 
 if __name__ == '__main__':
